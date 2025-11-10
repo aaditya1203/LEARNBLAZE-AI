@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
 import { toast } from "sonner";
 
 interface ContentGeneratorProps {
@@ -15,10 +16,17 @@ interface ContentGeneratorProps {
 }
 
 const ContentGenerator = ({ onContentGenerated, isLoading, setIsLoading }: ContentGeneratorProps) => {
+  const [user, setUser] = useState<User | null>(null);
   const [topic, setTopic] = useState("");
   const [subject, setSubject] = useState("science");
   const [difficulty, setDifficulty] = useState("intermediate");
   const [outputType, setOutputType] = useState("notes");
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user || null);
+    });
+  }, []);
 
   const handleGenerate = async () => {
     if (!topic.trim()) {
@@ -41,6 +49,19 @@ const ContentGenerator = ({ onContentGenerated, isLoading, setIsLoading }: Conte
 
       if (data?.content) {
         onContentGenerated(data.content);
+        
+        // Save to database if user is logged in
+        if (user) {
+          await supabase.from("content_history").insert({
+            user_id: user.id,
+            topic,
+            subject,
+            difficulty,
+            content_type: outputType,
+            content: data.content,
+          });
+        }
+        
         toast.success("Content generated successfully!");
       }
     } catch (error) {

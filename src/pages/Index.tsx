@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BookOpen, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import ContentGenerator from "@/components/ContentGenerator";
 import GeneratedContent from "@/components/GeneratedContent";
 
 const Index = () => {
+  const navigate = useNavigate();
   const [generatedContent, setGeneratedContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -12,14 +15,19 @@ const Index = () => {
       {/* Header */}
       <header className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-primary rounded-lg">
-              <BookOpen className="h-6 w-6 text-primary-foreground" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-primary rounded-lg">
+                <BookOpen className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-foreground">EduContent AI</h1>
+                <p className="text-xs text-muted-foreground">Personalized Learning Content Generator</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">EduContent AI</h1>
-              <p className="text-xs text-muted-foreground">Personalized Learning Content Generator</p>
-            </div>
+            <Button onClick={() => navigate("/auth")} variant="default">
+              Get Started
+            </Button>
           </div>
         </div>
       </header>
