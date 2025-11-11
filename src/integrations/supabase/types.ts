@@ -68,6 +68,38 @@ export type Database = {
         }
         Relationships: []
       }
+      shared_content: {
+        Row: {
+          content_id: string
+          created_at: string
+          id: string
+          shared_by: string
+          shared_with: string
+        }
+        Insert: {
+          content_id: string
+          created_at?: string
+          id?: string
+          shared_by: string
+          shared_with: string
+        }
+        Update: {
+          content_id?: string
+          created_at?: string
+          id?: string
+          shared_by?: string
+          shared_with?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shared_content_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content_history"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
