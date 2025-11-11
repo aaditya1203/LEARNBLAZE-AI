@@ -21,48 +21,85 @@ serve(async (req) => {
     }
 
     // Construct the system prompt based on output type
-    let systemPrompt = '';
+    let systemPrompt = `You are an expert educational content creator. Always format your responses in clean Markdown.`;
+    let userPrompt = '';
     
     if (outputType === 'notes') {
-      systemPrompt = `You are an expert educational content creator. Create comprehensive, well-structured study notes on the given topic.
-Format the notes with clear headings, subheadings, bullet points, and explanations.
-Include key concepts, definitions, and examples where appropriate.
-Adjust the complexity based on the difficulty level (${difficulty}).
-Make the content engaging and easy to understand for ${difficulty} level students.`;
+      systemPrompt += ` Create comprehensive, well-structured study notes.`;
+      userPrompt = `Create detailed educational notes about "${topic}" for ${subject} at ${difficulty} level.
+
+Format with:
+- Clear ## headings for main sections
+- **Bold** for key concepts
+- Bullet points for lists
+- Examples in > blockquotes
+- Code blocks where relevant
+- Include a mermaid diagram if it helps visualize concepts (wrap in \`\`\`mermaid blocks)
+
+Make it comprehensive and well-organized.`;
     } else if (outputType === 'quiz') {
-      systemPrompt = `You are an expert quiz creator. Generate a quiz with 5-10 multiple-choice questions about the given topic.
-Format each question as:
-Question: [question text]
-A) [option]
-B) [option]
-C) [option]
-D) [option]
-Correct Answer: [letter]
-Explanation: [brief explanation]
+      systemPrompt += ` Generate educational quizzes with questions and answers.`;
+      userPrompt = `Create a quiz about "${topic}" for ${subject} at ${difficulty} level.
 
-Adjust difficulty based on ${difficulty} level.
-Make questions thought-provoking and educational.`;
+Include:
+- 10 questions (mix of multiple-choice, true/false, and short answer)
+- Use **bold** for questions
+- Number each question clearly
+- Format multiple choice as A), B), C), D)
+- Add an answer key at the end in a markdown table
+- Include difficulty tags and explanations
+
+Make it engaging and educational.`;
     } else if (outputType === 'summary') {
-      systemPrompt = `You are an expert at creating concise, informative summaries.
-Create a clear summary of the given topic that captures the essential points.
-Use simple language and organize information logically.
-Adjust depth based on ${difficulty} level.
-Make it comprehensive yet concise.`;
-    } else if (outputType === 'explanation') {
-      systemPrompt = `You are an expert educator who excels at explaining complex concepts simply.
-Provide a clear, step-by-step explanation of the given topic.
-Use analogies and examples where helpful.
-Break down complex ideas into digestible parts.
-Adjust complexity based on ${difficulty} level.
-Make it engaging and easy to follow.`;
-    } else {
-      systemPrompt = `You are an expert educational content creator.
-Create high-quality educational content about the given topic.
-Adjust complexity based on ${difficulty} level.
-Make it engaging, accurate, and well-structured.`;
-    }
+      systemPrompt += ` Create concise, informative summaries.`;
+      userPrompt = `Create a summary about "${topic}" for ${subject} at ${difficulty} level.
 
-    const userPrompt = `Subject: ${subject}\nTopic: ${topic}\n\nCreate ${outputType} for this topic at ${difficulty} difficulty level.`;
+Format with:
+- ## Main heading
+- Key points in bullet format
+- **Bold** for important terms
+- A mermaid flowchart if it helps show concept flow
+- Brief but comprehensive
+
+Capture essential points clearly.`;
+    } else if (outputType === 'explanation') {
+      systemPrompt += ` Explain complex concepts in simple, clear terms.`;
+      userPrompt = `Provide a detailed explanation about "${topic}" for ${subject} at ${difficulty} level.
+
+Format with:
+- Clear ## headings for sections
+- Step-by-step breakdown
+- Real-world examples in blockquotes
+- A mermaid diagram to visualize the concept
+- **Bold** for key terms
+- Use analogies where helpful
+
+Make it easy to understand and engaging.`;
+    } else if (outputType === 'flashcards') {
+      systemPrompt += ` Create effective flashcards for learning.`;
+      userPrompt = `Create 15 flashcards about "${topic}" for ${subject} at ${difficulty} level.
+
+Format each as:
+### Card [number]
+**Q:** [question]
+**A:** [answer]
+
+Group related concepts and use clear, concise language.`;
+    } else if (outputType === 'lessonplan') {
+      systemPrompt += ` Create structured lesson plans.`;
+      userPrompt = `Create a lesson plan about "${topic}" for ${subject} at ${difficulty} level.
+
+Format with:
+- ## Main sections (Objectives, Materials, Activities, Assessment)
+- Bullet points for each item
+- Time estimates in **bold**
+- A mermaid gantt chart showing lesson timeline
+- Clear learning outcomes
+
+Make it practical and comprehensive.`;
+    } else {
+      userPrompt = `Create educational content about "${topic}" for ${subject} at ${difficulty} level. Format in clean Markdown with headings, lists, and proper formatting.`;
+    }
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',

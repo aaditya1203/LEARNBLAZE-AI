@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { BookOpen, LogOut, Sparkles, Trash2, Download, RefreshCw } from "lucide-react";
+import { BookOpen, LogOut, Sparkles, Trash2, RefreshCw, TrendingUp, Clock, Target, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -152,21 +152,35 @@ const Dashboard = () => {
     );
   }
 
+  const stats = [
+    { icon: BookOpen, label: "Total Topics", value: contentHistory.length, color: "text-primary" },
+    { icon: Target, label: "This Week", value: contentHistory.filter(item => 
+      new Date(item.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+    ).length, color: "text-accent" },
+    { icon: Award, label: "Subjects", value: new Set(contentHistory.map(item => item.subject)).size, color: "text-success" },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-hero">
-      <header className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-primary rounded-lg">
-                <BookOpen className="h-6 w-6 text-primary-foreground" />
+              <div className="p-2.5 bg-gradient-primary rounded-xl shadow-md">
+                <BookOpen className="h-7 w-7 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">EduContent AI</h1>
-                <p className="text-xs text-muted-foreground">Welcome back, {user?.email}</p>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  EduContent AI
+                </h1>
+                <p className="text-sm text-muted-foreground">Welcome back, {user?.email?.split('@')[0]}</p>
               </div>
             </div>
-            <Button variant="outline" onClick={handleSignOut}>
+            <Button 
+              variant="outline" 
+              onClick={handleSignOut}
+              className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-colors"
+            >
               <LogOut className="h-4 w-4 mr-2" />
               Sign Out
             </Button>
@@ -174,9 +188,29 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-6xl">
+      <main className="container mx-auto px-4 py-8 max-w-7xl">
         {!generatedContent ? (
           <>
+            {/* Stats Overview */}
+            {contentHistory.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 animate-fade-in">
+                {stats.map((stat, i) => (
+                  <div key={i} className="stat-card">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-muted-foreground font-medium">{stat.label}</p>
+                        <p className="text-3xl font-bold text-foreground mt-1">{stat.value}</p>
+                      </div>
+                      <div className={`p-3 bg-background/50 rounded-lg ${stat.color}`}>
+                        <stat.icon className="h-6 w-6" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Content Generator */}
             <div className="mb-8">
               <ContentGenerator 
                 onContentGenerated={handleContentGenerated}
@@ -185,21 +219,26 @@ const Dashboard = () => {
               />
             </div>
 
+            {/* AI Recommendations */}
             {recommendations.length > 0 && (
-              <Card className="mb-8">
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-primary" />
-                    <CardTitle>Recommended Topics</CardTitle>
+              <Card className="mb-8 content-card animate-fade-in border-primary/20">
+                <CardHeader className="bg-gradient-to-r from-primary/5 to-accent/5">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-primary rounded-lg">
+                      <Sparkles className="h-5 w-5 text-primary-foreground" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-xl">AI Recommended Topics</CardTitle>
+                      <CardDescription>Personalized based on your learning journey</CardDescription>
+                    </div>
                   </div>
-                  <CardDescription>Based on your learning history</CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {recommendations.map((topic, i) => (
                       <div
                         key={i}
-                        className="p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+                        className="interactive-card group"
                         onClick={() => {
                           const input = document.querySelector('input[placeholder="e.g., Photosynthesis"]') as HTMLInputElement;
                           if (input) {
@@ -208,8 +247,17 @@ const Dashboard = () => {
                           }
                         }}
                       >
-                        <p className="font-medium text-foreground">{topic}</p>
-                        <p className="text-sm text-muted-foreground">Click to generate</p>
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+                            <TrendingUp className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                              {topic}
+                            </p>
+                            <p className="text-sm text-muted-foreground mt-1">Click to generate content</p>
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -217,53 +265,76 @@ const Dashboard = () => {
               </Card>
             )}
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Learning History</CardTitle>
-                <CardDescription>Your previously generated content</CardDescription>
+            {/* Learning History */}
+            <Card className="content-card">
+              <CardHeader className="bg-gradient-to-r from-secondary/50 to-secondary/30 border-b border-border">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <Clock className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl">Learning History</CardTitle>
+                    <CardDescription>Your educational content library</CardDescription>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 {contentHistory.length === 0 ? (
-                  <p className="text-center text-muted-foreground py-8">
-                    No content yet. Generate your first learning material above!
-                  </p>
+                  <div className="text-center py-12">
+                    <div className="p-4 bg-muted/30 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                      <BookOpen className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                    <p className="text-muted-foreground text-lg mb-2">No content yet</p>
+                    <p className="text-sm text-muted-foreground">Generate your first learning material above!</p>
+                  </div>
                 ) : (
                   <div className="space-y-4">
                     {contentHistory.map((item) => (
                       <div
                         key={item.id}
-                        className="p-4 border border-border rounded-lg hover:shadow-md transition-all"
+                        className="interactive-card"
                       >
-                        <div className="flex items-start justify-between mb-2">
+                        <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
                           <div className="flex-1">
-                            <h3 className="font-semibold text-foreground mb-1">{item.topic}</h3>
-                            <div className="flex gap-2 mb-2">
-                              <Badge variant="secondary">{item.subject}</Badge>
-                              <Badge variant="outline">{item.difficulty}</Badge>
-                              <Badge>{item.content_type}</Badge>
+                            <h3 className="font-bold text-lg text-foreground mb-2 group-hover:text-primary transition-colors">
+                              {item.topic}
+                            </h3>
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              <Badge variant="secondary" className="font-medium">
+                                {item.subject}
+                              </Badge>
+                              <Badge variant="outline" className="font-medium">
+                                {item.difficulty}
+                              </Badge>
+                              <Badge className="bg-gradient-primary text-primary-foreground font-medium">
+                                {item.content_type}
+                              </Badge>
                             </div>
-                            <p className="text-sm text-muted-foreground">
-                              {format(new Date(item.created_at), "PPp")}
-                            </p>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Clock className="h-3.5 w-3.5" />
+                              <span>{format(new Date(item.created_at), "PPp")}</span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex gap-2 mt-3">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleRevisit(item)}
-                          >
-                            <RefreshCw className="h-3 w-3 mr-1" />
-                            View
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDelete(item.id)}
-                          >
-                            <Trash2 className="h-3 w-3 mr-1" />
-                            Delete
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleRevisit(item)}
+                              className="hover:bg-primary/10 hover:text-primary hover:border-primary/50"
+                            >
+                              <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+                              View
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDelete(item.id)}
+                              className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50"
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                              Delete
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}

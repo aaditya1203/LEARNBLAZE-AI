@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, RefreshCw, CheckCircle } from "lucide-react";
+import { Download, RefreshCw, CheckCircle, Copy } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
+import ContentMarkdown from "./ContentMarkdown";
 
 interface GeneratedContentProps {
   content: string;
@@ -47,43 +48,51 @@ const GeneratedContent = ({ content, onRegenerate }: GeneratedContentProps) => {
   };
 
   return (
-    <Card className="shadow-lg border-border">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle className="text-2xl flex items-center gap-2">
-          <CheckCircle className="h-5 w-5 text-success" />
-          Generated Content
-        </CardTitle>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handleCopy}
-          >
-            Copy Text
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handleExportPDF}
-          >
-            <Download className="mr-2 h-4 w-4" />
-            Export PDF
-          </Button>
-          <Button 
-            variant="secondary" 
-            size="sm"
-            onClick={onRegenerate}
-          >
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Regenerate
-          </Button>
+    <Card className="content-card animate-fade-in">
+      <CardHeader className="bg-gradient-to-r from-primary/5 to-accent/5 border-b border-border">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <CardTitle className="text-2xl sm:text-3xl flex items-center gap-3">
+            <div className="p-2 bg-success/10 rounded-lg">
+              <CheckCircle className="h-6 w-6 text-success" />
+            </div>
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-bold">
+              Generated Content
+            </span>
+          </CardTitle>
+          <div className="flex flex-wrap gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleCopy}
+              className="hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-colors"
+            >
+              <Copy className="mr-2 h-4 w-4" />
+              Copy
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleExportPDF}
+              className="hover:bg-accent/10 hover:text-accent hover:border-accent/50 transition-colors"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export PDF
+            </Button>
+            <Button 
+              variant="default" 
+              size="sm"
+              onClick={onRegenerate}
+              className="bg-gradient-primary text-primary-foreground hover:opacity-90 transition-opacity"
+            >
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Regenerate
+            </Button>
+          </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="prose prose-slate max-w-none">
-          <div className="whitespace-pre-wrap text-foreground leading-relaxed p-6 bg-secondary/30 rounded-lg">
-            {content}
-          </div>
+      <CardContent className="p-6 sm:p-8">
+        <div className="bg-gradient-to-br from-secondary/30 to-secondary/10 rounded-xl p-6 sm:p-8 border border-border/50">
+          <ContentMarkdown content={content} />
         </div>
       </CardContent>
     </Card>
