@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import mermaid from "mermaid";
+import { CheckCircle2, XCircle, HelpCircle } from "lucide-react";
 
 interface ContentMarkdownProps {
   content: string;
@@ -28,18 +29,66 @@ const ContentMarkdown = ({ content }: ContentMarkdownProps) => {
     }
   }, [content]);
 
-  // Process content to detect and wrap mermaid diagrams
+  // Process content to detect and wrap mermaid diagrams, MCQs, and special formats
   const processContent = (text: string) => {
+    let processedText = text;
+    
+    // Handle mermaid diagrams
     const mermaidRegex = /```mermaid\n([\s\S]*?)```/g;
-    return text.replace(mermaidRegex, (match, diagram) => {
+    processedText = processedText.replace(mermaidRegex, (match, diagram) => {
       return `<div class="mermaid my-6">\n${diagram}\n</div>`;
     });
+    
+    // Enhance MCQ format - detect questions with options
+    processedText = processedText.replace(
+      /(\*\*Question \d+:?\*\*.*?\n)((?:[A-D]\)|[A-D]\.)[^\n]+\n?)+/g,
+      (match) => {
+        return `<div class="mcq-question">\n${match}\n</div>`;
+      }
+    );
+    
+    // Enhance answer sections
+    processedText = processedText.replace(
+      /(\*\*Answer:?\*\*.*)/gi,
+      '<div class="answer-section">$1</div>'
+    );
+    
+    return processedText;
   };
 
   const processedContent = processContent(content);
 
   return (
     <div ref={containerRef} className="prose prose-slate max-w-none dark:prose-invert">
+      <style>{`
+        .mcq-question {
+          background: linear-gradient(135deg, hsl(var(--primary) / 0.05), hsl(var(--accent) / 0.05));
+          border-left: 4px solid hsl(var(--primary));
+          padding: 1.5rem;
+          margin: 1.5rem 0;
+          border-radius: 0.75rem;
+          box-shadow: 0 2px 8px hsl(var(--foreground) / 0.05);
+        }
+        .answer-section {
+          background: hsl(var(--success) / 0.1);
+          border-left: 4px solid hsl(var(--success));
+          padding: 1rem 1.5rem;
+          margin: 1rem 0;
+          border-radius: 0.5rem;
+          font-weight: 500;
+        }
+        .prose h2 {
+          background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        .prose blockquote {
+          background: hsl(var(--muted));
+          border-radius: 0.5rem;
+          padding: 1rem 1.5rem;
+        }
+      `}</style>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{

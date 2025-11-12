@@ -16,7 +16,16 @@ interface LearningAnalyticsProps {
   contentHistory: ContentItem[];
 }
 
-const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--secondary))', 'hsl(var(--success))', 'hsl(var(--warning))'];
+const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))', 'hsl(var(--chart-6))'];
+
+const CONTENT_TYPE_COLORS: Record<string, string> = {
+  'Notes': 'hsl(var(--chart-1))',
+  'Quiz': 'hsl(var(--chart-2))',
+  'Summary': 'hsl(var(--chart-3))',
+  'Explanation': 'hsl(var(--chart-4))',
+  'Flashcards': 'hsl(var(--chart-5))',
+  'Lesson Plan': 'hsl(var(--chart-6))',
+};
 
 const LearningAnalytics = ({ contentHistory }: LearningAnalyticsProps) => {
   // Topics studied over time (last 7 days)
@@ -225,9 +234,12 @@ const LearningAnalytics = ({ contentHistory }: LearningAnalyticsProps) => {
                 <Legend />
                 <Bar 
                   dataKey="count" 
-                  fill="hsl(var(--accent))"
                   radius={[8, 8, 0, 0]}
-                />
+                >
+                  {contentTypeDistribution.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={CONTENT_TYPE_COLORS[entry.name] || COLORS[index % COLORS.length]} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
