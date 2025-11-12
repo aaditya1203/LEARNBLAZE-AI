@@ -13,6 +13,7 @@ import GeneratedContent from "@/components/GeneratedContent";
 import LearningAnalytics from "@/components/analytics/LearningAnalytics";
 import SharedContentView from "@/components/collaboration/SharedContentView";
 import ShareContentDialog from "@/components/collaboration/ShareContentDialog";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { format } from "date-fns";
 
 interface ContentItem {
@@ -185,14 +186,17 @@ const Dashboard = () => {
                 <p className="text-sm text-muted-foreground">Welcome back, {user?.email?.split('@')[0]}</p>
               </div>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={handleSignOut}
-              className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-colors"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <Button 
+                variant="outline" 
+                onClick={handleSignOut}
+                className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-colors"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
       </header>

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, RefreshCw, CheckCircle, Copy } from "lucide-react";
+import { Download, RefreshCw, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import ContentMarkdown from "./ContentMarkdown";
@@ -11,7 +11,7 @@ interface GeneratedContentProps {
 }
 
 const GeneratedContent = ({ content, onRegenerate }: GeneratedContentProps) => {
-  const handleExportPDF = () => {
+  const handleDownloadPDF = () => {
     try {
       const doc = new jsPDF();
       const pageWidth = doc.internal.pageSize.getWidth();
@@ -35,16 +35,11 @@ const GeneratedContent = ({ content, onRegenerate }: GeneratedContentProps) => {
       });
       
       doc.save('educational-content.pdf');
-      toast.success("PDF exported successfully!");
+      toast.success("PDF downloaded successfully!");
     } catch (error) {
-      console.error('Error exporting PDF:', error);
-      toast.error("Failed to export PDF");
+      console.error('Error downloading PDF:', error);
+      toast.error("Failed to download PDF");
     }
-  };
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(content);
-    toast.success("Content copied to clipboard!");
   };
 
   return (
@@ -61,28 +56,19 @@ const GeneratedContent = ({ content, onRegenerate }: GeneratedContentProps) => {
           </CardTitle>
           <div className="flex flex-wrap gap-2">
             <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handleCopy}
-              className="hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-colors"
-            >
-              <Copy className="mr-2 h-4 w-4" />
-              Copy
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handleExportPDF}
-              className="hover:bg-accent/10 hover:text-accent hover:border-accent/50 transition-colors"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Export PDF
-            </Button>
-            <Button 
               variant="default" 
               size="sm"
-              onClick={onRegenerate}
+              onClick={handleDownloadPDF}
               className="bg-gradient-primary text-primary-foreground hover:opacity-90 transition-opacity"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Download PDF
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={onRegenerate}
+              className="hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-colors"
             >
               <RefreshCw className="mr-2 h-4 w-4" />
               Regenerate
