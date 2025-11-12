@@ -41,8 +41,8 @@ const Index = () => {
             AI-Powered Education
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-            Transform Learning with<br />
-            <span className="bg-gradient-primary bg-clip-text text-transparent">Intelligent Content</span>
+            Empower Your Mind—<br />
+            <span className="bg-gradient-primary bg-clip-text text-transparent">Smarter Content, Brighter Futures</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Generate personalized notes, quizzes, explanations, and summaries tailored to your learning level and subject matter.
