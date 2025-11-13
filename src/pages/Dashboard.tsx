@@ -11,8 +11,6 @@ import { toast } from "@/hooks/use-toast";
 import ContentGenerator from "@/components/ContentGenerator";
 import GeneratedContent from "@/components/GeneratedContent";
 import LearningAnalytics from "@/components/analytics/LearningAnalytics";
-import SharedContentView from "@/components/collaboration/SharedContentView";
-import ShareContentDialog from "@/components/collaboration/ShareContentDialog";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { format } from "date-fns";
 
@@ -139,10 +137,6 @@ const Dashboard = () => {
     setGeneratedContent(item.content);
   };
 
-  const handleViewSharedContent = (content: string, topic: string) => {
-    setCurrentTopic({ topic, content } as any);
-    setGeneratedContent(content);
-  };
 
   const handleContentGenerated = async (content: string) => {
     setGeneratedContent(content);
@@ -204,10 +198,9 @@ const Dashboard = () => {
       <main className="container mx-auto px-4 py-8 max-w-7xl">
         {!generatedContent ? (
           <Tabs defaultValue="home" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto mb-8">
+            <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
               <TabsTrigger value="home">Home</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              <TabsTrigger value="shared">Shared</TabsTrigger>
             </TabsList>
 
             <TabsContent value="home" className="space-y-8">
@@ -336,7 +329,6 @@ const Dashboard = () => {
                               </div>
                             </div>
                             <div className="flex gap-2">
-                              <ShareContentDialog contentId={item.id} contentTitle={item.topic} />
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -369,9 +361,6 @@ const Dashboard = () => {
               <LearningAnalytics contentHistory={contentHistory} />
             </TabsContent>
 
-            <TabsContent value="shared">
-              <SharedContentView onViewContent={handleViewSharedContent} />
-            </TabsContent>
           </Tabs>
         ) : (
           <GeneratedContent 
