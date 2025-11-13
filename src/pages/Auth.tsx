@@ -141,7 +141,7 @@ const Auth = () => {
             <div className="p-2 bg-gradient-primary rounded-lg">
               <BookOpen className="h-8 w-8 text-primary-foreground" />
             </div>
-            <h1 className="text-3xl font-bold text-foreground">EduContent AI</h1>
+            <h1 className="text-3xl font-bold text-foreground">LearnBlaze AI</h1>
           </div>
           <p className="text-muted-foreground">Personalized Learning Content Generator</p>
         </div>

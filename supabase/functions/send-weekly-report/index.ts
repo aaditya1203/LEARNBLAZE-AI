@@ -178,7 +178,7 @@ const handler = async (req: Request): Promise<Response> => {
                 </p>
               </div>
               <div class="footer">
-                <p>This is your weekly learning summary from EduContent AI</p>
+                <p>This is your weekly learning summary from LearnBlaze AI</p>
                 <p>Keep learning, keep growing! 🌱</p>
               </div>
             </div>
@@ -189,7 +189,7 @@ const handler = async (req: Request): Promise<Response> => {
       // Send email
       try {
         const emailResponse = await resend.emails.send({
-          from: "EduContent AI <onboarding@resend.dev>",
+          from: "LearnBlaze AI <onboarding@resend.dev>",
           to: [profile.email],
           subject: `📊 Your Weekly Learning Report - ${stats.totalTopics} Topics This Week!`,
           html: emailHtml,
