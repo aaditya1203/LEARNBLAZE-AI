@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { BookOpen, LogOut, Sparkles, Trash2, RefreshCw, TrendingUp, Clock, Target, Award, BarChart3 } from "lucide-react";
+import { BookOpen, LogOut, Sparkles, Trash2, RefreshCw, TrendingUp, Clock, Target, Award, ClipboardCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,7 @@ import { toast } from "@/hooks/use-toast";
 import ContentGenerator from "@/components/ContentGenerator";
 import GeneratedContent from "@/components/GeneratedContent";
 import LearningAnalytics from "@/components/analytics/LearningAnalytics";
+import EvaluationDashboard from "@/components/analytics/EvaluationDashboard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { format } from "date-fns";
 
@@ -198,9 +199,10 @@ const Dashboard = () => {
       <main className="container mx-auto px-4 py-8 max-w-7xl">
         {!generatedContent ? (
           <Tabs defaultValue="home" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
+            <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto mb-8">
               <TabsTrigger value="home">Home</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="evaluation">Evaluation</TabsTrigger>
             </TabsList>
 
             <TabsContent value="home" className="space-y-8">
@@ -359,6 +361,10 @@ const Dashboard = () => {
 
             <TabsContent value="analytics">
               <LearningAnalytics contentHistory={contentHistory} />
+            </TabsContent>
+
+            <TabsContent value="evaluation">
+              <EvaluationDashboard contentHistory={contentHistory} />
             </TabsContent>
 
           </Tabs>
